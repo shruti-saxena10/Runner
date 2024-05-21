@@ -20,3 +20,20 @@ jobs:
     - name: Build with Maven
       run: mvn package --file spring-boot-demo/pom.xml
 
+    - uses: actions/upload-artifact@v4
+      with:
+        name: hellospringboot
+        path: spring-boot-demo/target/*.jar
+    
+    - name: Trivy FS Scan
+      run: |
+        trivy fs --format table -o trivy-fs-report.html spring-boot-demo
+
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+
+
